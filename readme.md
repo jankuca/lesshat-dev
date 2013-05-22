@@ -50,3 +50,18 @@ module.exports.$result = function () {
   return arg;
 };
 ~~~
+
+### LESS-only Mixins
+
+There is definitely a lot of mixins that do not require any JavaScript-based processing of input arguments and a simple LESS file is all that's needed.
+
+You can create `mixins/%name%/%name%.less` files instead of JavaScript files and their contents will be simply copied to the resulting LESS file.
+
+~~~less
+.border-radius(...) {
+  -moz-border-radius: "@{arguments}";
+  -o-border-radius: "@{arguments}";
+  -webkit-border-radius: "@{arguments}";
+  border-radius: "@{arguments}";
+}
+~~~

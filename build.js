@@ -12,13 +12,22 @@ var mixin_keys = fs.readdirSync(MIXIN_DIR).sort();
 var chunks = [];
 
 mixin_keys.forEach(function (mixin_key) {
-  var mixin_path = path.join(MIXIN_DIR, mixin_key, mixin_key + '.js');
+  var mixin_path_noext = path.join(MIXIN_DIR, mixin_key, mixin_key);
 
-  if (fs.existsSync(mixin_path)) {
-    var mixin = require(mixin_path);
+  if (fs.existsSync(mixin_path_noext + '.less')) {
+    var less = fs.readFileSync(mixin_path_noext + '.less', 'utf8');
+    less = less.trim();
+
+    chunks.push(less);
+    return;
+  }
+
+  if (fs.existsSync(mixin_path_noext + '.js')) {
+    var mixin = require(mixin_path_noext + '.js');
     var generator = new LessGenerator(mixin, mixin_key);
 
     chunks.push(generator.generate());
+    return;
   }
 });
 
