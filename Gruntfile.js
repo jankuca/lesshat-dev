@@ -4,7 +4,7 @@ module.exports = function (grunt) {
     var done = this.async();
     var exec = require('child_process').exec;
 
-    var proc = exec('node ./build.js > ./build/mixins.less');
+    var proc = exec('node ./src/build.js > ./build/mixins.less');
     proc.stderr.on('data', function (chunk) {
       console.error(String(chunk));
     });

@@ -3,14 +3,12 @@ var path = require('path');
 var LessGenerator = require('./less-generator');
 
 
-var MIXIN_DIR = path.resolve('./mixins');
-var OUTPUT_FILE = path.resolve('./build/mixins.less');
+var MIXIN_DIR = path.resolve(__dirname, '../mixins');
 
-
-var mixin_keys = fs.readdirSync(MIXIN_DIR).sort();
 
 var chunks = [];
 
+var mixin_keys = fs.readdirSync(MIXIN_DIR).sort();
 mixin_keys.forEach(function (mixin_key) {
   var mixin_path_noext = path.join(MIXIN_DIR, mixin_key, mixin_key);
 
