@@ -2,6 +2,7 @@
   "name": "lesshat-dev",
   "version": "0.1.0",
   "dependencies": {
-    "grunt": "0.4.x"
+    "grunt": "0.4.x",
+    "uglify-js": "~2.3.6"
   }
 }
