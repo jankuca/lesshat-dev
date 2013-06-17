@@ -1,11 +1,20 @@
 
 module.exports = function transition(value) {
+  value = value || "all 500ms ease";
+
+  value = value.replace(/(\d+)ms/g, function (match, ms) {
+    return ((ms / 1000) + 's').replace(/0\./g, '.');
+  });
   return value;
 };
 
 
 module.exports.ms = function (value) {
-  return 'MS/' + value;
+  value = value.replace(/ease/g, '-ms-ease');
+  value = value.replace(/(\d+)ms/g, function (match, ms) {
+    return ((ms / 1000) + 's').replace(/0\./g, '.');
+  });
+  return value;
 };
 
 

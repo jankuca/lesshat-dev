@@ -22,6 +22,20 @@ LessGenerator.prefixes = {
   w3c: ''
 };
 
+
+LessGenerator.fixArguments = function () {
+  return "@{arguments}".replace(/^\[|\]$/g, "");
+};
+
+
+LessGenerator.fixArguments_ = function (input) {
+  var fixer = LessGenerator.fixArguments.toString();
+  fixer = LessGenerator.uglifyFunction(fixer);
+  fixer = fixer.replace(/^function\([^)]*\)\{return/, '');
+  fixer = fixer.replace(/\}$/, '');
+  return fixer;
+};
+
 LessGenerator.signals = {
   webkit: 1,
   moz: 2,
@@ -91,9 +105,9 @@ LessGenerator.prototype.generateBodies_ = function () {
   var chunks = [];
   Object.keys(fns).forEach(function (vendor) {
     var fn = fns[vendor];
-    var js = fn.toString();
-    js = '(' + js + '());';
-    js = LessGenerator.uglify(js)
+    var args = LessGenerator.fixArguments_("@{arguments}");
+    var js = LessGenerator.uglifyFunction(fn);
+    js = '(' + js + ')(' + args + ')';
     js = js.replace(/`/g, '\\`');
 
     chunks.push('  ' +
@@ -161,14 +175,14 @@ LessGenerator.prototype.generatePrimaryResultDefinition_ = function () {
 
 LessGenerator.prototype.generateVendorResultInceptionJS_ = function (vendor) {
   var prefix = LessGenerator.prefixes[vendor];
-  var signal = LessGenerator.signals[vendor];
+  var signal = Object.keys(LessGenerator.prefixes).indexOf(vendor) + 1;
 
   var result = '%{process_' + vendor + '}';
   if (this.mixin.$result) {
     var js = this.mixin.$result.toString();
     js = js.replace(/%vendor/g, vendor);
-    js = '(' + js + '());';
-    js = LessGenerator.uglify(js);
+    js = LessGenerator.uglifyFunction(js);
+    js = '(' + js + ')("@{arguments}")'
     js = js.replace(/`/g, '\\`');
 
     result = '~`' + js.replace(/`/g, '\\`') + '`;';
@@ -200,8 +214,10 @@ LessGenerator.prototype.generateResultCalls_ = function () {
 
   var chunks = [];
   Object.keys(fns).forEach(function (vendor) {
-    chunks.push('  .result(@arguments, @' + vendor + '_signal, @' + vendor + ', @' + vendor + '_local);');
-    chunks.push('  // -- this comment must be here because of LESS bug');
+    var signal = Object.keys(LessGenerator.prefixes).indexOf(vendor) + 1;
+
+    chunks.push('  .result(@arguments, ' + signal + ', @' + vendor + ', @' + vendor + '_local);');
+    chunks.push('  // --'); // this comment must be here because of LESS bug
   });
 
   return chunks.join('\n');
@@ -212,14 +228,19 @@ LessGenerator.prototype.generateResultCalls_ = function () {
 LessGenerator.uglify_options = {};
 
 
-LessGenerator.uglify = function (js) {
+LessGenerator.uglifyFunction = function (js) {
+  js = js.toString();
+  js = '(' + js + ')()';
+
   var ast = UglifyJS.parse(js);
   var compressor = UglifyJS.Compressor(LessGenerator.uglify_options);
 
   ast.figure_out_scope();
   ast = ast.transform(compressor);
 
-  return ast.print_to_string();
+  var result = ast.print_to_string();
+  result = result.replace(/^!/, '').replace(/\(\);$/, '');
+  return result;
 };
 
 
