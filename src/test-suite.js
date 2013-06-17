@@ -72,7 +72,10 @@ Object.defineProperties(TestSuite.prototype, {
       var less_code = this.build_result_contents_ + fixture;
       less.render(less_code, function (err, css) {
         if (err) {
-          return callback(err);
+          return callback(new Error(
+            err.message + '\n\n' +
+            err.extract.join('\n') + '\n'
+          ));
         }
 
         var result = parser.exec(css);
