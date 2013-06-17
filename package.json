@@ -4,8 +4,5 @@
   "dependencies": {
     "less": "1.4.x",
     "uglify-js": "~2.3.6"
-  },
-  "peerDependencies": {
-    "lesshat": "2.x.x"
   }
 }
