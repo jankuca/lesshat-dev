@@ -31,6 +31,18 @@ LessGenerator.signals = {
 };
 
 
+LessGenerator.generateGlobalToggles = function () {
+  var vendors = Object.keys(LessGenerator.prefixes);
+
+  var chunks = [];
+  vendors.forEach(function (vendor) {
+    chunks.push('@' + vendor + ': true;');
+  });
+
+  return chunks.join('\n');
+};
+
+
 LessGenerator.prototype.getFunctionMap = function () {
   var mixin = this.mixin;
 
@@ -49,7 +61,7 @@ LessGenerator.prototype.getFunctionMap = function () {
 LessGenerator.prototype.generate = function () {
   var chunks = [
     '.' + this.mixin_key + '(...) {',
-    this.generateToggles_(),
+    this.generateLocalToggles_(),
     this.generateBodies_(),
     this.generateResults_(),
     '}'
@@ -59,7 +71,7 @@ LessGenerator.prototype.generate = function () {
 };
 
 
-LessGenerator.prototype.generateToggles_ = function () {
+LessGenerator.prototype.generateLocalToggles_ = function () {
   var mixin = this.mixin;
   var fns = this.fns;
 

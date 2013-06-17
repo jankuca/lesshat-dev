@@ -14,6 +14,9 @@ if (fs.existsSync(header_path)) {
   chunks.push(header.trim());
 }
 
+
+chunks.push(LessGenerator.generateGlobalToggles());
+
 var mixin_keys = fs.readdirSync(MIXIN_DIR).sort();
 mixin_keys.forEach(function (mixin_key) {
   var mixin_path_noext = path.join(MIXIN_DIR, mixin_key, mixin_key);
