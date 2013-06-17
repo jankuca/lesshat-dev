@@ -24,15 +24,17 @@ LessGenerator.prefixes = {
 
 
 LessGenerator.fixArguments = function () {
-  return "@{arguments}".replace(/^\[|\]$/g, "");
+  var args = "@{arguments}";
+  args = args.split(', ').join(' ');
+  args = args.replace(/^\[|\]$/g, "");
+  return args;
 };
 
 
 LessGenerator.fixArguments_ = function (input) {
   var fixer = LessGenerator.fixArguments.toString();
   fixer = LessGenerator.uglifyFunction(fixer);
-  fixer = fixer.replace(/^function\([^)]*\)\{return/, '');
-  fixer = fixer.replace(/\}$/, '');
+  fixer = '(' + fixer + ')()';
   return fixer;
 };
 
@@ -177,15 +179,16 @@ LessGenerator.prototype.generateVendorResultInceptionJS_ = function (vendor) {
   var prefix = LessGenerator.prefixes[vendor];
   var signal = Object.keys(LessGenerator.prefixes).indexOf(vendor) + 1;
 
-  var result = '%{process_' + vendor + '}';
+  var result = '@process_' + vendor + '';
   if (this.mixin.$result) {
-    var js = this.mixin.$result.toString();
-    js = js.replace(/%vendor/g, vendor);
-    js = LessGenerator.uglifyFunction(js);
-    js = '(' + js + ')("@{arguments}")'
-    js = js.replace(/`/g, '\\`');
+   var args = LessGenerator.fixArguments_("@{arguments}");
+   var js = this.mixin.$result.toString();
+   js = js.replace(/%vendor/g, vendor);
+   js = LessGenerator.uglifyFunction(js);
+   js = '(' + js + ')(' + args + ')';
+   js = js.replace(/`/g, '\\`');
 
-    result = '~`' + js.replace(/`/g, '\\`') + '`;';
+   result = '~`' + js.replace(/`/g, '\\`') + '`;';
   }
 
   return '.inception (@signal, @arguments)' +
