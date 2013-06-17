@@ -4,12 +4,13 @@ var LessGenerator = require('./less-generator');
 var MixinLoader = require('./mixin-loader');
 
 
-var MIXIN_DIR = path.resolve(__dirname, '../mixins');
+var parent_dirname = path.resolve(__dirname, '..', '..', '..');
+var mixin_dirname = path.join(parent_dirname, 'mixins');
 
 
 var chunks = [];
 
-var header_path = path.join(MIXIN_DIR, 'header.less');
+var header_path = path.join(mixin_dirname, 'header.less');
 if (fs.existsSync(header_path)) {
   var header = fs.readFileSync(header_path, 'utf8');
   chunks.push(header.trim());
@@ -18,7 +19,7 @@ if (fs.existsSync(header_path)) {
 
 chunks.push(LessGenerator.generateGlobalToggles());
 
-var loader = new MixinLoader(MIXIN_DIR);
+var loader = new MixinLoader(mixin_dirname);
 var mixin_descs = loader.getMixinDescriptors();
 
 mixin_descs.forEach(function (desc) {
@@ -39,7 +40,7 @@ mixin_descs.forEach(function (desc) {
 });
 
 
-var footer_path = path.join(MIXIN_DIR, 'footer.less');
+var footer_path = path.join(mixin_dirname, 'footer.less');
 if (fs.existsSync(footer_path)) {
   var footer = fs.readFileSync(footer_path, 'utf8');
   chunks.push(footer.trim());

@@ -1,10 +1,11 @@
-var TestSuite = require('./test-suite');
 var path = require('path');
+var TestSuite = require('./test-suite');
 
 
 var tester = new TestSuite();
 
-var build_result_path = path.resolve(__dirname, '../build/mixins.less');
+var parent_dirname = path.resolve(__dirname, '..', '..', '..');
+var build_result_path = path.join(parent_dirname, 'build', 'mixins.less');
 tester.addBuildResult(build_result_path);
 
 
