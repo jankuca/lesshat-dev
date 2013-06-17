@@ -1,24 +1,7 @@
-var child_process = require('child_process');
-var exec = child_process.exec;
-var spawn = child_process.spawn;
-
 
 module.exports = function (grunt) {
-  grunt.registerTask('build', function () {
-    var done = this.async();
-
-    var proc = exec('node ./src/build.js > ./build/mixins.less');
-    proc.stderr.on('data', function (chunk) {
-      process.stderr.write(chunk);
-    });
-    proc.on('exit', function (code) {
-      if (code !== 0) return done(false);
-
-      console.log('> ./build/mixins.less');
-      done(true);
-    });
-  });
-
+  var child_process = require('child_process');
+  var exec = child_process.exec;
 
   grunt.registerTask('test', function () {
     var done = this.async();
@@ -52,7 +35,4 @@ module.exports = function (grunt) {
       });
     });
   });
-
-
-  grunt.registerTask('default', [ 'build', 'test' ]);
 };
